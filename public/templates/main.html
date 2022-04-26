@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300&display=swap" rel="stylesheet">
+	<title>Sumerian</title>
+	<style>
+		@font-face {
+			font-family: 'sinacherib';
+			src: url('assets/fonts/sinacherib.ttf')  format('truetype');
+		}
+
+		body{
+			background-color: #222;
+		}
+
+		.flashcard{
+			position: relative;
+			background-color: #aaa;
+			width: 90%;
+			height: auto;
+			left: 50%;
+			transform: translate(-50%, 0%);
+			border-spacing: 3vh 6vh;
+			border-collapse: separate;
+
+		}
+
+		.panel1{
+			text-align: center;
+			font-family: Source Code Pro;
+			font-size: 5vh;
+			color: #000;
+			border: 0.1vh solid black;
+			width: 33.3%;
+		}
+
+		.panel2{
+			text-align: center;
+			font-size: 5vh;
+			font-family: sinacherib;
+			color: #000;
+			border: 0.1vh solid black;
+			width: 33.3%;
+		}
+
+		.panel3{
+			text-align: center;
+			font-family: Source Code Pro;
+			font-size: 2vh;
+			color: #000;
+			border: 0.1vh solid black;
+			width: 33.3%;
+		}
+	</style>
+</head>
+<body>
+	<table class="flashcard" id="sumertable">
+		<tr id="firstrow">
+			<td class="panel1"></td>
+
+			<td class="panel2"></td>
+
+			<td class="panel3"></td>
+		</tr>
+	</table>
+</body>
+<script>
+	var table = document.getElementById("sumertable")
+	var tablebody = table.children[0]
+
+	document.addEventListener('mousedown', function(e){
+		var target = e.target;
+		if (target.nodeName == "TD"){
+			target.style.color = "#000"
+			setTimeout(function(){
+				target.style.color = "#000"
+			}, 5000)
+		}
+	})
+
+	var signlist = '';
+	var signsreq = new XMLHttpRequest;
+	signsreq.open("GET", "data/signlist.txt")
+	signsreq.send()
+	signsreq.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 200){
+			signlist = this.responseText.split("\n")
+			populateTable()
+		}
+	}
+
+	var namelist = '';
+	var namesreq = new XMLHttpRequest;
+	namesreq.open("GET", "data/namelist.txt")
+	namesreq.send()
+	namesreq.onreadystatechange = function(){
+		if (this.readyState == 4 && this.status == 200){
+			namelist = this.responseText.split("\n")
+			populateTable()
+		}
+	}
+
+	function populateTable(){
+		if (namelist != '' && signlist != ''){
+			for (var i = 0; i < signlist.length; i++){
+				let row = document.getElementById("firstrow").cloneNode(true)
+				row.children[0].textContent = namelist[i]
+				row.children[1].textContent = signlist[i]
+				tablebody.appendChild(row)
+				let req = new XMLHttpRequest;
+				req.open("GET", "data/" + namelist[i] + ".txt")
+				req.send()
+				req.onreadystatechange = function(){
+					if (this.readyState == 4 && this.status == 200){
+						row.children[2].innerHTML = "<br>" + this.responseText.replaceAll("\n", "<br>") + "<br>"
+					}
+				}
+			}
+		}
+	}
+</script>
+</html>
