@@ -19,9 +19,10 @@
 			position: relative;
 			background-color: #aaa;
 			width: 90%;
-			height: auto;
+			max-width: 90%;
 			left: 50%;
-			transform: translate(-50%, 0%);
+			table-layout: fixed;
+			transform: translate(-50%, 0);
 			border-spacing: 3vh 6vh;
 			border-collapse: separate;
 
@@ -52,18 +53,21 @@
 			color: #000;
 			border: 0.1vh solid black;
 			width: 33.3%;
+			overflow-wrap: break-word;
 		}
 	</style>
 </head>
 <body>
 	<table class="flashcard" id="sumertable">
-		<tr id="firstrow">
-			<td class="panel1"></td>
+		<tbody>
+			<tr id="firstrow">
+				<td class="panel1"></td>
 
-			<td class="panel2"></td>
+				<td class="panel2"></td>
 
-			<td class="panel3"></td>
-		</tr>
+				<td class="panel3"></td>
+			</tr>
+		</tbody>
 	</table>
 </body>
 <script>
@@ -80,17 +84,6 @@
 		}
 	})
 
-	var signlist = '';
-	var signsreq = new XMLHttpRequest;
-	signsreq.open("GET", "data/signlist.txt")
-	signsreq.send()
-	signsreq.onreadystatechange = function(){
-		if (this.readyState == 4 && this.status == 200){
-			signlist = this.responseText.split("\n")
-			populateTable()
-		}
-	}
-
 	var namelist = '';
 	var namesreq = new XMLHttpRequest;
 	namesreq.open("GET", "data/namelist.txt")
@@ -102,23 +95,29 @@
 		}
 	}
 
+	function resizeTable(){
+		table.style.width = "90%"
+	}
+
 	function populateTable(){
-		if (namelist != '' && signlist != ''){
-			for (var i = 0; i < signlist.length; i++){
+		if (namelist != ''){
+			for (var i = 0; i < namelist.length; i++){
 				let row = document.getElementById("firstrow").cloneNode(true)
 				row.children[0].textContent = namelist[i]
-				row.children[1].textContent = signlist[i]
 				tablebody.appendChild(row)
 				let req = new XMLHttpRequest;
 				req.open("GET", "data/" + namelist[i] + ".txt")
 				req.send()
 				req.onreadystatechange = function(){
 					if (this.readyState == 4 && this.status == 200){
-						row.children[2].innerHTML = "<br>" + this.responseText.replaceAll("\n", "<br>") + "<br>"
+						row.children[1].innerHTML = this.responseText.split("\n")[0]
+						row.children[2].innerHTML = "<br>" + this.responseText.replaceAll("\n", "<br>").replace(row.children[1].innerHTML, "").replace("<br>----------<br>", "") + "<br>"
+						row.children[2].style.width = "33%"
 					}
 				}
 			}
 		}
+		resizeTable()
 	}
 </script>
 </html>

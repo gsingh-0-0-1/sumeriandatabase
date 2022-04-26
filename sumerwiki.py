@@ -73,9 +73,12 @@ def fetchWikiSourceData(sign):
 	return result_text, result_html
 
 def writeSignData(name):
+	if name == '' or name == '\xa0':
+		return
 	data = fetchWikiSourceData(DICT[name][0])[0]
 	sign = DICT[name][0]
 	f = open(BASEDIR + name + ".txt", "w")
+	f.write(DICT[name][0] + "\n")
 	for d in data:
 		f.write("----------\n")
 		for i in range(1, len(d)):
@@ -97,10 +100,6 @@ def writeSignData(name):
 	n = open(BASEDIR + "namelist.txt", "a+")
 	n.write(name + "\n")
 	n.close()
-
-	s = open(BASEDIR + "signlist.txt", "a+")
-	s.write(sign + "\n")
-	s.close()
 
 for table in wikisoup.findAll('table'):
 	for row in table.tbody.findAll('tr'):
@@ -125,6 +124,12 @@ for table in wikisoup.findAll('table'):
 			if value == '':
 				continue
 
+			if target == '\xa0':
+				continue
+
+			if "/" in target:
+				target = target.replace("/", ", ")
+
 			if target in DICT.keys():
 				DICT[target] += [value]
 			else:
@@ -140,9 +145,6 @@ for table in wikisoup.findAll('table'):
 			pass
 
 f = open(BASEDIR + "namelist.txt", "w")
-f.close()
-
-f = open(BASEDIR + "signlist.txt", "w")
 f.close()
 
 for key in DICT.keys():
