@@ -11,6 +11,11 @@
 			src: url('assets/fonts/sinacherib.ttf')  format('truetype');
 		}
 
+		@font-face {
+			font-family: 'cuneiformcomposite';
+			src: url('assets/fonts/CuneiformComposite.ttf')  format('truetype');
+		}
+
 		body{
 			background-color: #222;
 		}
@@ -34,25 +39,34 @@
 			font-size: 5vh;
 			color: #000;
 			border: 0.1vh solid black;
-			width: 33.3%;
+			width: 25%;
 		}
 
 		.panel2{
 			text-align: center;
 			font-size: 5vh;
-			font-family: sinacherib;
+			font-family: cuneiformcomposite;
 			color: #000;
 			border: 0.1vh solid black;
-			width: 33.3%;
+			width: 25%;
 		}
 
 		.panel3{
+			text-align: center;
+			font-size: 5vh;
+			font-family: sinacherib;
+			color: #000;
+			border: 0.1vh solid black;
+			width: 25%;
+		}
+
+		.panel4{
 			text-align: center;
 			font-family: Source Code Pro;
 			font-size: 2vh;
 			color: #000;
 			border: 0.1vh solid black;
-			width: 33.3%;
+			width: 25%;
 			overflow-wrap: break-word;
 		}
 	</style>
@@ -61,11 +75,13 @@
 	<table class="flashcard" id="sumertable">
 		<tbody>
 			<tr id="firstrow">
-				<td class="panel1"></td>
+				<td class="panel1">Phonetic Values</td>
 
-				<td class="panel2"></td>
+				<td class="panel2">UR III</td>
 
-				<td class="panel3"></td>
+				<td class="panel3">Neo-Assyrian</td>
+
+				<td class="panel4">Definitions</td>
 			</tr>
 		</tbody>
 	</table>
@@ -103,6 +119,9 @@
 		if (namelist != ''){
 			for (var i = 0; i < namelist.length; i++){
 				let row = document.getElementById("firstrow").cloneNode(true)
+				for (var child of row.children){
+					child.textContent = ''
+				}
 				row.children[0].textContent = namelist[i]
 				tablebody.appendChild(row)
 				let req = new XMLHttpRequest;
@@ -111,8 +130,8 @@
 				req.onreadystatechange = function(){
 					if (this.readyState == 4 && this.status == 200){
 						row.children[1].innerHTML = this.responseText.split("\n")[0]
-						row.children[2].innerHTML = "<br>" + this.responseText.replaceAll("\n", "<br>").replace(row.children[1].innerHTML, "").replace("<br>----------<br>", "") + "<br>"
-						row.children[2].style.width = "33%"
+						row.children[2].innerHTML = this.responseText.split("\n")[0]
+						row.children[3].innerHTML = "<br>" + this.responseText.replaceAll("\n", "<br>").replace(row.children[1].innerHTML, "").replace("<br>----------<br>", "") + "<br>"
 					}
 				}
 			}

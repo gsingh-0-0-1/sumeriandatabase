@@ -81,6 +81,15 @@ def writeSignData(name):
 	f.write(DICT[name][0] + "\n")
 	for d in data:
 		f.write("----------\n")
+
+		#for words with only one definition, there won't be a header saying
+		#"Etmyology _" above the definition, and so starting at the second element
+		#in the range iterator will remove the part of speech
+		#so here, we're going to test for words with only one definition and add
+		#in a dummy element so that starting at the second element is "safe" for us
+		if len(data) == 1:
+			d.insert(0, '')
+
 		for i in range(1, len(d)):
 			line = d[i].replace(sign, '')
 			#prep for html display
@@ -121,6 +130,13 @@ for table in wikisoup.findAll('table'):
 
 			value = ''.join(value)
 
+			print(target, end = ' ')
+
+			target = target.replace("?", "")
+			target = target.replace("\n", "")
+
+			print(target)
+
 			if value == '':
 				continue
 
@@ -144,9 +160,10 @@ for table in wikisoup.findAll('table'):
 		except IndexError:
 			pass
 
-f = open(BASEDIR + "namelist.txt", "w")
-f.close()
+def createSumerDatabase():
+	f = open(BASEDIR + "namelist.txt", "w")
+	f.close()
 
-for key in DICT.keys():
-	writeSignData(key)
-	time.sleep(0.5)
+	for key in DICT.keys():
+		writeSignData(key)
+		time.sleep(0.5)
